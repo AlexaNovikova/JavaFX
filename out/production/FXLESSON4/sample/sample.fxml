@@ -47,7 +47,7 @@
                 </TextField>
                 <Button id="buttonSend" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addMessage" prefHeight="46.0" prefWidth="216.0" style="-fx-background-radius: 10;" text="Отправить" HBox.hgrow="NEVER">
                     <font>
-                        <Font name="System Bold" size="17.0" />
+                        <Font name="System Bold" size="16.0" />
                     </font>
                     <effect>
                         <Lighting bumpInput="$null">
