@@ -1,4 +1,4 @@
-package sample;
+package client;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -18,11 +18,17 @@ public class Controller implements Initializable{
     @FXML
     private TextField textField;
 
+    private Network network;
+
     ObservableList<String> words= FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+    }
+
+    public void setNetwork(Network network) {
+        this.network = network;
     }
 
     public void addMessage (){
