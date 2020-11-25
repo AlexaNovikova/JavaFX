@@ -12,34 +12,60 @@ public class server {
         public static final int SERVER_PORT = 8189;
 
         public static void main(String[] args) {
-            try {
-                ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
-                System.out.println("Ожидание подключения...");
+            System.out.println("Ожидаем подключения...");
+            try{ ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Клиент подключился");
-                DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
-                DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
-                while (true) {
-                    String str = dataInputStream.readUTF();
-                    if (str.equals("/end")) {
-                        break;
-                    }
-                    Thread tread = new Thread(() -> {
-                        Scanner scanner = new Scanner(System.in);
-                        if (!scanner.next().isBlank()) {
-                            try {
-                                dataOutputStream.writeUTF(scanner.nextLine());
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                   while (!clientSocket.isClosed()){
+
+                    DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
+                    DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
+
+                    Thread thread = new Thread(() -> {
+                        while (true) {
+                            Scanner scanner = new Scanner(System.in);
+                            String serverMessage = scanner.nextLine();
+                            if (!serverMessage.isEmpty()) {
+                                try {
+                                    dataOutputStream.writeUTF("Сообщение от сервера: " + serverMessage);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     });
-                }
+
+                    thread.setDaemon(true);
+                    thread.start();
+
+                    while (true) {
+                        String str;
+                        try {
+                            str = dataInputStream.readUTF();
+                            System.out.println(str);
+//                        dataOutputStream.writeUTF("Сообщение от сервера: " + str.toUpperCase());
+                            if(str.equalsIgnoreCase("exit")){
+                                System.out.println("Клиент прервал соединение.");
+                                dataOutputStream.flush();
+                                break;
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    dataInputStream.close();
+                    dataOutputStream.close();
+                    clientSocket.close();
+                   }
+
             }
             catch (IOException e){
                 System.out.println("Порт уже занят!");
                 e.printStackTrace();
             }
+
         }
+
     }
+
 

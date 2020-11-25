@@ -9,6 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -36,10 +37,29 @@ public class Controller implements Initializable{
         if (!message.isBlank())
         {
         listView.getItems().addAll(message);
-        textField.setText("");}
+        textField.setText("");
+            try {
+                network.getDataOutputStream().writeUTF(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+                String errorMessage = "Ошибка при отправке";
+                Main.showErrorMessage(e.getMessage(),errorMessage);
+            }
+        }
 
     }
+
+    public void appendMessage (String message){
+     //   listView.getItems().addAll(message);
+            Platform.runLater(new Runnable() {
+                @Override public void run() {
+                    listView.getItems().addAll(message);
+                }
+            });
+    }
     public void Exit (){
+        network.setDataOutputStream("exit");
+        network.Close();
         Platform.exit();
     }
     public void Reset(){
